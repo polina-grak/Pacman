@@ -1,0 +1,257 @@
+package pacman.view;
+import pacman.model.GameTableModel;
+
+import javax.swing.*;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyListener;
+
+import pacman.controller.AnimationThread;
+import pacman.model.ItemDirection;
+
+public class GameBoardView extends JFrame {
+
+    private final GameTableModel tableModel;
+    private final JTable gameTable;
+    private final JPanel centerPanel;
+
+    private JLabel scoreValue;
+    private JLabel livesValue;
+    private JLabel highScoreValue;
+    private JLabel timeCounterValue;
+    private Font baseFont;
+
+    private final AnimationThread animationThread;
+    private volatile int animationFrameCounter = 0;
+    private final int ANIMATION_DELAY_MS = 150;
+
+
+
+    public GameBoardView(GameTableModel tableModel) {
+
+        this.tableModel = tableModel;
+        setLayout(new BorderLayout());
+        pack();
+        //setSize(650,750);
+        setMinimumSize(new Dimension(450, 550));
+        setLocationRelativeTo(null);
+        setBackground(new Color(0,0,60));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+        this.baseFont = (FontLoader.loadFont ("/Font/pacman.ttf"));
+
+        JPanel topPanel = topPanel(baseFont);
+
+        this.gameTable = new JTable(tableModel);
+        gameTable.setOpaque(false);
+        gameBoardDesign ();
+
+        JScrollPane scrollPane = new JScrollPane(gameTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBackground(new Color(0,0,60));
+        centerPanel.add(scrollPane);
+
+
+        JPanel bottomPanel = bottomPanel(baseFont);
+
+        add(topPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
+        //add(gameTable, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateComponentSizes();
+            }
+        });
+
+        animationThread = new AnimationThread(this, ANIMATION_DELAY_MS);
+        animationThread.start();
+    }
+
+    public void GameKeyListener (KeyListener listener){
+        this.addKeyListener(listener);
+        this.setFocusable(true);
+        this.requestFocusInWindow();
+    }
+
+    public void incrementAnimationFrameCounter() {
+        this.animationFrameCounter++;
+    }
+    public int getAnimationFrame() {
+        return this.animationFrameCounter;
+    }
+
+    public JTable getGameTable() {
+        return this.gameTable;
+    }
+
+    public void stopAnimationThread() {
+        if (animationThread != null) {
+            animationThread.stopThread();
+        }
+    }
+
+    public ItemDirection getItemDirectionFromModel() {
+        return tableModel.getItemDirection();
+    }
+
+    private void updateComponentSizes() {
+        int panelWidth = centerPanel.getWidth() - 10;
+        int panelHeight = centerPanel.getHeight() - 10;
+        int numCols = tableModel.getColumnCount();
+        int numRows = tableModel.getRowCount();
+
+        int cellSizeByWidth = (panelWidth > 0 && numCols > 0) ? panelWidth / numCols : 20;
+        int cellSizeByHeight = (panelHeight > 0 && numRows > 0) ? panelHeight / numRows : 20;
+        int cellSize = Math.max(5, Math.min(cellSizeByWidth, cellSizeByHeight));
+
+        gameTable.setRowHeight(cellSize);
+        Dimension tableDim = new Dimension(cellSize * numCols, cellSize * numRows);
+        gameTable.setPreferredScrollableViewportSize(tableDim);
+        gameTable.setMinimumSize(tableDim);
+        gameTable.setPreferredSize(tableDim);
+        gameTable.setMaximumSize(tableDim);
+
+        for (int i = 0; i < numCols; i++) {
+            TableColumn column = gameTable.getColumnModel().getColumn(i);
+            column.setMinWidth(cellSize);
+            column.setMaxWidth(cellSize);
+            column.setPreferredWidth(cellSize);
+        }
+
+        this.revalidate();
+        this.repaint();
+
+    }
+
+    private void gameBoardDesign (){
+
+        gameTable.setDefaultRenderer(Object.class, new PacmanCellRenderer(this));
+
+        final int cellSize = 25;
+        gameTable.setRowHeight(cellSize);
+        for (int i = 0; i < gameTable.getColumnCount(); i++) {
+            TableColumn column = gameTable.getColumnModel().getColumn(i);
+            column.setMinWidth(cellSize);
+            column.setMaxWidth(cellSize);
+            column.setPreferredWidth(cellSize);
+        }
+
+        gameTable.setTableHeader(null);
+        gameTable.setShowGrid(false);
+        gameTable.setIntercellSpacing(new Dimension(0, 0));
+        gameTable.setCellSelectionEnabled(false);
+        gameTable.setFocusable(false);
+        gameTable.setBackground(Color.BLACK);
+        gameTable.setOpaque(true);
+
+    }
+    private JPanel topPanel(Font baseFont){
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        topPanel.setBackground(new Color(0,0,60));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+
+        baseFont = (baseFont != null)
+                ? baseFont.deriveFont(Font.BOLD, 20f)
+                : new Font("Arial", Font.BOLD, 40);
+
+        Font headerFont = baseFont.deriveFont(Font.BOLD, 20f);
+        Font bodyFont = baseFont.deriveFont(Font.BOLD, 15f);
+
+        GridBagConstraints topIndicators = new GridBagConstraints();
+
+        topIndicators.fill = GridBagConstraints.HORIZONTAL;
+        topIndicators.insets = new Insets(5, 10, 0, 10);
+
+        topIndicators.gridx=0;
+        topIndicators.gridy=0;
+
+        JLabel scoreLabel = new JLabel("Score:");
+        scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(scoreLabel, topIndicators);
+
+        topIndicators.gridx=1;
+        topIndicators.gridy=0;
+        JLabel highScoreLabel = new JLabel("High Score:");
+        highScoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(highScoreLabel, topIndicators);
+
+        topIndicators.gridx=2;
+        topIndicators.gridy=0;
+        JLabel timeCounterLabel = new JLabel("Time Counter:");
+        timeCounterLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(timeCounterLabel, topIndicators);
+
+        topIndicators.gridx=0;
+        topIndicators.gridy=1;
+        scoreValue = new JLabel("test");
+        scoreValue.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(scoreValue, topIndicators);
+
+        topIndicators.gridx=1;
+        topIndicators.gridy=1;
+        highScoreValue = new JLabel("test");
+        highScoreValue.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(highScoreValue, topIndicators);
+
+        topIndicators.gridx=2;
+        topIndicators.gridy=1;
+        timeCounterValue = new JLabel("test");
+        timeCounterValue.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(timeCounterValue, topIndicators);
+
+        scoreLabel.setFont(headerFont);
+
+        scoreLabel.setForeground(Color.orange);
+        highScoreLabel.setFont(headerFont);
+        highScoreLabel.setForeground(Color.orange);
+        timeCounterLabel.setFont(headerFont);
+        timeCounterLabel.setForeground(Color.orange);
+        scoreValue.setFont(bodyFont);
+        scoreValue.setForeground(Color.orange);
+        highScoreValue.setFont(bodyFont);
+        highScoreValue.setForeground(Color.orange);
+        timeCounterValue.setFont(bodyFont);
+        timeCounterValue.setForeground(Color.orange);
+
+        return topPanel;
+    }
+    private JPanel bottomPanel(Font baseFont){
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(new Color(0,0,60));
+
+        baseFont = (baseFont != null)
+                ? baseFont.deriveFont(Font.BOLD, 20f)
+                : new Font("Arial", Font.BOLD, 40);
+
+        JLabel life = new JLabel("Life Counter");
+        life.setFont(baseFont);
+        life.setForeground(Color.orange);
+        life.setHorizontalAlignment(SwingConstants.CENTER);
+        bottomPanel.add(life);
+
+
+        return bottomPanel;
+    }
+
+    public int score (int score){
+        scoreValue.setText(String.valueOf(score));
+        return score;
+    }
+    public void highScore (int highScore){
+        highScoreValue.setText(String.format(String.valueOf(highScore)));
+
+    }
+    public void timeCounter (int minutes, int seconds){
+        timeCounterValue.setText(String.format("Time: %02d:%02d", minutes, seconds));
+    }
+
+}

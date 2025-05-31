@@ -1,0 +1,20 @@
+package pacman.model;
+
+public enum CellState {
+    EMPTY,
+    DOT,
+    POWER_PELLET,
+    INVISIBILITY_UPGRADE,
+    SCORE_MULT_UPGRADE,
+    EXTRA_LIFE_UPGRADE,
+    SPEED_BOOST_UPGRADE,
+    GHOST_EATER_UPGRADE,
+    WALL,
+    GHOST_WALL,
+    PACMAN,
+    GHOST,
+    GHOST_SPOT1,
+    GHOST_SPOT2,
+    GHOST_SPOT3,
+    GHOST_SPOT4,
+}
