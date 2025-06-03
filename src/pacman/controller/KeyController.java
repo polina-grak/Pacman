@@ -1,24 +1,32 @@
 package pacman.controller;
+import pacman.controller.GameController;
 
-import pacman.model.GameTableModel;
-import pacman.model.ItemDirection;
+import pacman.enums.ItemDirection;
+import pacman.model.PacmanModel;
 import pacman.view.GameBoardView;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyController implements KeyListener {
-    private GameTableModel model;
+    private PacmanModel model;
     private GameBoardView view;
+    public GameController controller;
 
-    public KeyController(GameTableModel model, GameBoardView view) {
+    public KeyController(PacmanModel model, GameBoardView view, GameController controller) {
         this.model = model;
         this.view = view;
-
+        this.controller = controller;
         this.view.GameKeyListener(this);
     }
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+
+        if (e.isControlDown() && e.isShiftDown() && keyCode == KeyEvent.VK_Q) {
+            controller.closeGame();
+            return;
+        }
+
         ItemDirection intendedDirection = null;
 
 
@@ -38,7 +46,7 @@ public class KeyController implements KeyListener {
 
         }
         if (intendedDirection != null) {
-            model.requestPacmanMove(intendedDirection);
+            model.setPacmanIntendedDirection(intendedDirection);
         }
 
     }

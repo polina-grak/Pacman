@@ -15,7 +15,7 @@ public class MazeSetterView extends JDialog {
         setLocationRelativeTo(menu);
         setLayout(new BorderLayout(10, 10));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setBackground(Color.BLACK);
+
 
         int width = getWidth();
         int height = getHeight();

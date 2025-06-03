@@ -1,0 +1,21 @@
+package pacman.enums;
+
+public enum CellState {
+    EMPTY,
+    DOT,
+    POWER_PELLET,
+    INVISIBILITY_UPGRADE,
+    SCORE_MULT_UPGRADE,
+    EXTRA_LIFE_UPGRADE,
+    SPEED_BOOST_UPGRADE,
+    GHOST_EATER_UPGRADE,
+    WALL,
+    GHOST_WALL,
+    PACMAN,
+    GHOST_RED,
+    GHOST_PINK,
+    GHOST_CYAN,
+
+}
+
+

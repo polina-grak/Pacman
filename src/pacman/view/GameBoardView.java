@@ -1,4 +1,5 @@
 package pacman.view;
+import pacman.model.GameModel;
 import pacman.model.GameTableModel;
 
 import javax.swing.*;
@@ -8,12 +9,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyListener;
 
-import pacman.controller.AnimationThread;
-import pacman.model.ItemDirection;
+import pacman.model.PacmanModel;
+import pacman.threads.AnimationThread;
+import pacman.enums.ItemDirection;
 
 public class GameBoardView extends JFrame {
 
     private final GameTableModel tableModel;
+    private final GameModel gameModel;
+    private final PacmanModel pacmanModel;
     private final JTable gameTable;
     private final JPanel centerPanel;
 
@@ -25,17 +29,19 @@ public class GameBoardView extends JFrame {
 
     private final AnimationThread animationThread;
     private volatile int animationFrameCounter = 0;
-    private final int ANIMATION_DELAY_MS = 150;
+    private final int ANIMATION_DELAY_MS = 250;
 
 
 
-    public GameBoardView(GameTableModel tableModel) {
+    public GameBoardView(GameTableModel tableModel, GameModel gameModel, PacmanModel pacmanModel) {
 
         this.tableModel = tableModel;
+        this.gameModel = gameModel;
+        this.pacmanModel = pacmanModel;
         setLayout(new BorderLayout());
         pack();
         //setSize(650,750);
-        setMinimumSize(new Dimension(450, 550));
+        setMinimumSize(new Dimension(550, 650));
         setLocationRelativeTo(null);
         setBackground(new Color(0,0,60));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,6 +79,8 @@ public class GameBoardView extends JFrame {
 
         animationThread = new AnimationThread(this, ANIMATION_DELAY_MS);
         animationThread.start();
+        gameModel.setAnimationThread(animationThread);
+
     }
 
     public void GameKeyListener (KeyListener listener){
@@ -99,7 +107,7 @@ public class GameBoardView extends JFrame {
     }
 
     public ItemDirection getItemDirectionFromModel() {
-        return tableModel.getItemDirection();
+        return pacmanModel.getItemDirection() != null ? pacmanModel.getItemDirection() : ItemDirection.NONE;
     }
 
     private void updateComponentSizes() {
@@ -192,7 +200,7 @@ public class GameBoardView extends JFrame {
 
         topIndicators.gridx=0;
         topIndicators.gridy=1;
-        scoreValue = new JLabel("test");
+        scoreValue = new JLabel(String.valueOf(gameModel.getScore()));
         scoreValue.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(scoreValue, topIndicators);
 
@@ -204,7 +212,7 @@ public class GameBoardView extends JFrame {
 
         topIndicators.gridx=2;
         topIndicators.gridy=1;
-        timeCounterValue = new JLabel("test");
+        timeCounterValue = new JLabel("00:00");
         timeCounterValue.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(timeCounterValue, topIndicators);
 
@@ -242,16 +250,17 @@ public class GameBoardView extends JFrame {
         return bottomPanel;
     }
 
-    public int score (int score){
-        scoreValue.setText(String.valueOf(score));
-        return score;
+    public void scoreUpdate (){
+        scoreValue.setText(String.valueOf(gameModel.getScore()));
     }
     public void highScore (int highScore){
         highScoreValue.setText(String.format(String.valueOf(highScore)));
 
     }
-    public void timeCounter (int minutes, int seconds){
-        timeCounterValue.setText(String.format("Time: %02d:%02d", minutes, seconds));
+    public void updateTimeCounter (int minutes, int seconds){
+        timeCounterValue.setText(String.format("%02d:%02d", minutes, seconds));
     }
-
+    public static void close(JFrame gameBoardView){
+        gameBoardView.dispose();
+    }
 }
