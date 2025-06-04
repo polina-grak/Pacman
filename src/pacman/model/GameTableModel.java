@@ -20,6 +20,7 @@ public class GameTableModel extends AbstractTableModel {
     private static final CellState W = CellState.WALL;
     private static final CellState GW = CellState.GHOST_WALL;
     private static final CellState E = CellState.EMPTY;
+    private static final CellState GE = CellState.GHOST_EMPTY;
 
 
     private static final CellState[][] PATTERN_A = {
@@ -60,8 +61,8 @@ public class GameTableModel extends AbstractTableModel {
     private static final CellState[][] PATTERN_GHOST_SPACE = {
             {E, E, E, E, W},
             {W, GW, GW, GW, W},
-            {W, E, E, E, W},
-            {W, E, E, E, W},
+            {W, GE, GE, GE, W},
+            {W, GE, GE, GE, W},
             {W, W, W, W, W}
     };
     private static final List<CellState[][]> PATTERNS = List.of(PATTERN_A, PATTERN_B, PATTERN_C, PATTERN_D, PATTERN_E);
@@ -118,7 +119,6 @@ public class GameTableModel extends AbstractTableModel {
                 }
             }
         }
-       dotsCount = 1;
 
 
     }

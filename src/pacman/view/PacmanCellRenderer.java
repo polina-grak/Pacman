@@ -42,6 +42,7 @@ public class PacmanCellRenderer extends JPanel implements TableCellRenderer {
         BufferedImage imageToDraw = null;
 
         ItemDirection itemDir = gameBoardView.getItemDirectionFromModel();
+
         ItemAnimation currentAnimation = null;
 
 
@@ -172,6 +173,20 @@ public class PacmanCellRenderer extends JPanel implements TableCellRenderer {
             case POWER_PELLET:
                 imageToDraw = ResourceManager.getImage("POWER_PELLET");
                 break;
+            case EXTRA_LIFE_UPGRADE:
+                imageToDraw = ResourceManager.getImage("EXTRA_LIFE");
+                break;
+            case EXTRA_FOOD:
+                imageToDraw = ResourceManager.getImage("EXTRA_FOOD");
+                break;
+            case GHOST_EATER_UPGRADE:
+                imageToDraw = ResourceManager.getImage("GHOST_EATER");
+                break;
+            case INVISIBILITY_UPGRADE:
+                imageToDraw = ResourceManager.getImage("INVISIBILITY");
+                break;
+
+
         }
         if (imageToDraw != null) {
             g2d.drawImage(imageToDraw, 0, 0, getWidth(), getHeight(), null);
@@ -188,4 +203,5 @@ public class PacmanCellRenderer extends JPanel implements TableCellRenderer {
         g2d.setColor(Color.GRAY);
         g2d.fillOval(2, 2, getWidth() - 4, getHeight() - 4);
     }
+
 }

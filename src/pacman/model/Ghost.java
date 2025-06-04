@@ -5,7 +5,9 @@ import pacman.enums.GhostType;
 import pacman.enums.ItemDirection;
 import pacman.threads.GhostMovementThread;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Ghost {
@@ -14,7 +16,7 @@ public class Ghost {
     public int row;
     public int col;
     public ItemDirection currentDirection;
-    public CellState tileUnderneath;
+    public CellState cellUnderneath;
     public GhostType type;
     public CellState ghostType;
     public GhostMovementThread ghostThread = null;
@@ -27,7 +29,7 @@ public class Ghost {
     private int ticksSinceLastPathRecalculation;
 
 
-    public Ghost(GhostType type, int startRow, int startCol, ItemDirection startDirection, CellState ghostType, CellState initialTileUnderneath, int releaseDelayTicks) {
+    public Ghost(GhostType type, int startRow, int startCol, ItemDirection startDirection, CellState ghostType, CellState initialCellUnderneath, int releaseDelayTicks) {
         this.type = type;
         this.startRow = startRow;
         this.startCol = startCol;
@@ -36,7 +38,7 @@ public class Ghost {
         this.currentDirection = startDirection;
         this.ghostType = ghostType;
         this.isReleased = false;
-        this.tileUnderneath = initialTileUnderneath;
+        this.cellUnderneath = initialCellUnderneath;
         this.releaseDelayTicks = releaseDelayTicks;
         this.currentTickCounter = 0;
 
@@ -44,6 +46,7 @@ public class Ghost {
         this.ticksSinceLastPathRecalculation = 0;
 
     }
+
 
     public boolean isReleased() {
         return isReleased;
@@ -92,7 +95,6 @@ public class Ghost {
         this.plannedPath = path;
         this.resetTicksSinceLastPathRecalculation();
     }
-
 
     public void setCurrentDirection(ItemDirection currentDirection) {
         this.currentDirection = currentDirection;

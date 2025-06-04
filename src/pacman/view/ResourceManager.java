@@ -114,12 +114,21 @@ public class ResourceManager {
 
         images.put("POWER_PELLET", ImageLoader.loadImage("/Food/Pfood.png"));
 
+        images.put("EXTRA_LIFE", ImageLoader.loadImage("/Food/extra_life.png"));
+
+        images.put("EXTRA_FOOD", ImageLoader.loadImage("/Food/extra_food.png"));
+
+        images.put("GHOST_EATER", ImageLoader.loadImage("/Food/ghost_eater.png"));
+
+        images.put("INVISIBILITY", ImageLoader.loadImage("/Food/invincibility.png"));
+
         images.put("PACMAN_LOGO", ImageLoader.loadImage("/Pac-Man-Logo.png"));
 
         images.put("GAME_OVER", ImageLoader.loadImage("/Other/gameover.png"));
 
         images.put("VICTORY", ImageLoader.loadImage("/Other/victory.png"));
 
+        images.put("LIVE", ImageLoader.loadImage("/Other/heart13.png"));
 
 
 

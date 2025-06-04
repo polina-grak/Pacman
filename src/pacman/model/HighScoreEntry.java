@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class HighScoreEntry implements Serializable, Comparable {
-
     private static final long serialVersionUID = 1L;
     private String playerName;
     private int score;

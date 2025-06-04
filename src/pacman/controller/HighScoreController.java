@@ -23,8 +23,13 @@ public class HighScoreController {
 
     public List<HighScoreEntry> getHighScores() {
         loadHighScores();
-        // Возвращаем копию или неизменяемый список, чтобы предотвратить внешнее изменение
-        return Collections.unmodifiableList(scores);
+        return scores;
+    }
+    public int getHighestScore() {
+        if (scores != null && !scores.isEmpty()) {
+            return scores.getFirst().getScore();
+        }
+        return 0;
     }
 
     public void addScore(String playerName, int score) {
@@ -65,6 +70,8 @@ public class HighScoreController {
             System.err.println("Error saving" + e.getMessage());
         }
     }
+
+
 }
 
 

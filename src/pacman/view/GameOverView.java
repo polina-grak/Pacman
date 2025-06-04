@@ -153,7 +153,7 @@ public class GameOverView extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 try {
                     String name = nameField.getText();
-                    if (name.isEmpty()) {
+                    if (name.trim().isEmpty()) {
                         throw new ParseException("enter name", 0);
                     }else
                         gameController.gameIsEnded(name);

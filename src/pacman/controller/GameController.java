@@ -1,5 +1,4 @@
 package pacman.controller;
-import pacman.controller.MenuController;
 import pacman.enums.*;
 
 import pacman.model.*;
@@ -9,12 +8,12 @@ import pacman.threads.PacmanMovementThread;
 import pacman.threads.TimerThread;
 import pacman.view.GameBoardView;
 import pacman.view.GameOverView;
-import pacman.view.Menu;
 
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 import static pacman.enums.CellState.*;
 import static pacman.model.GameTableModel.PATTERN_SIZE;
@@ -29,6 +28,7 @@ public class GameController {
     private final int PAUSE_DURATION_MS = 2000;
     private final int PACMAN_MOVE_DELAY = 500;
     private static final int RECALCULATE_PATH_INTERVAL_TICKS = 5;
+
 
     private PacmanModel pacmanModel;
     private GameTableModel gameTableModel;
@@ -58,11 +58,11 @@ public class GameController {
         int pinkDelayTicks = (pinkGhostDelaySeconds * 1000) / GHOST_MOVE_DELAY_MS;
         int cyanDelayTicks = (cyanGhostDelaySeconds * 1000) / GHOST_MOVE_DELAY_MS;
 
-        Ghost redGhost = new Ghost(GhostType.RED, tableHeight - 2, 1, ItemDirection.UP, GHOST_RED, CellState.EMPTY, redDelayTicks);
+        Ghost redGhost = new Ghost(GhostType.RED, tableHeight - 2, 1, ItemDirection.UP, GHOST_RED, CellState.GHOST_EMPTY, redDelayTicks);
         ghosts.add(redGhost);
-        Ghost pinkGhost = new Ghost(GhostType.PINK, tableHeight - 2, 2, ItemDirection.UP, GHOST_PINK, CellState.EMPTY, pinkDelayTicks);
+        Ghost pinkGhost = new Ghost(GhostType.PINK, tableHeight - 2, 2, ItemDirection.UP, GHOST_PINK, CellState.GHOST_EMPTY, pinkDelayTicks);
         ghosts.add(pinkGhost);
-        Ghost cyanGhost = new Ghost(GhostType.CYAN, tableHeight - 2, 3, ItemDirection.UP, GHOST_CYAN, CellState.EMPTY, cyanDelayTicks);
+        Ghost cyanGhost = new Ghost(GhostType.CYAN, tableHeight - 2, 3, ItemDirection.UP, GHOST_CYAN, CellState.GHOST_EMPTY, cyanDelayTicks);
         ghosts.add(cyanGhost);
 
 
@@ -157,21 +157,37 @@ public class GameController {
             if (contentOfNextCell == CellState.DOT) {
                 this.gameModel.updateBoardViewScore(10);
                 this.gameTableModel.eatDot();
-
-
             } else if (contentOfNextCell == CellState.POWER_PELLET) {
-                this.gameModel.updateBoardViewScore(50); //Add action update score
+                this.gameModel.updateBoardViewScore(50);
                 // Activate hunter mode
+            } else if (contentOfNextCell == CellState.EXTRA_LIFE_UPGRADE) {
+                this.gameModel.increaseLives();
+                gameBoardView.updateLives( gameModel.getLives() );
+            } else if (contentOfNextCell == CellState.EXTRA_FOOD) {
+                this.gameModel.updateBoardViewScore(100);
+            } else if (contentOfNextCell == CellState.GHOST_EATER_UPGRADE) {
+                ghostEaterReset();
+            }else if (contentOfNextCell == CellState.INVISIBILITY_UPGRADE) {
+                gameModel.setUpgradeState( UpgradeState.INVISIBILITY_UPGRADE_STATE );
             }
+
+
+
             gameBoardView.scoreUpdate();
             checkDotsCount();
 
+
             for (Ghost ghost : this.ghosts) {
                 if (this.pacmanModel.getRow() == ghost.row && this.pacmanModel.getCol() == ghost.col) {
-                    pacmanCaught();
-                    return true; //
+                    if (gameModel.getUpgradeState() != UpgradeState.INVISIBILITY_UPGRADE_STATE ) {
+                        pacmanCaught();
+                        return true;
+                    } else {
+                        gameTableModel.setCellState(ghost.row, ghost.col, ghost.ghostType);
+                    }
                 }
             }
+
             gameTableModel.setCellState(pacmanModel.getRow(), pacmanModel.getCol(), CellState.PACMAN);
 
             return true;
@@ -205,7 +221,12 @@ public class GameController {
                 int targetRow = pacmanModel.getRow();
                 int targetCol = pacmanModel.getCol();
 
+
                 PathNode targetNode = gameTableModel.findPathNodeWithA(ghost.row, ghost.col, targetRow, targetCol);
+                if (gameModel.getUpgradeState() == UpgradeState.INVISIBILITY_UPGRADE_STATE ) {
+                    targetNode = gameTableModel.findPathNodeWithA(ghost.row, ghost.col, ghost.getStartRow(), ghost.getStartCol());
+                }
+
                 if (targetNode != null) {
                     PathNode startNodeEquivalent = new PathNode(ghost.row, ghost.col, null, null, 0, 0);
                     Queue<ItemDirection> newPath = gameTableModel.reconstructPath(targetNode, startNodeEquivalent);
@@ -218,6 +239,7 @@ public class GameController {
                 } else {
                     ghost.setPlannedPath(new LinkedList<>());
                 }
+
                 ghost.resetTicksSinceLastPathRecalculation();
             }
 
@@ -250,7 +272,7 @@ public class GameController {
                     currentPath.poll();
 
 
-                    gameTableModel.setCellState(ghost.row, ghost.col, ghost.tileUnderneath);
+                    gameTableModel.setCellState(ghost.row, ghost.col, getRandomCellUnderneath(ghost.cellUnderneath));
 
                     int prevGhostRow = ghost.row;
                     int prevGhostCol = ghost.col;
@@ -261,14 +283,19 @@ public class GameController {
 
                     CellState contentOfNextCell = gameTableModel.getCellState(nextRow, nextCol);
                     if (contentOfNextCell == CellState.PACMAN || (nextRow == pacmanModel.getRow() && nextCol == pacmanModel.getCol())) {
-                        gameTableModel.setCellState(prevGhostRow, prevGhostCol, ghost.tileUnderneath);
-                        ghost.setCurrentDirection(nextMoveDirection);
-                        ghost.tileUnderneath = CellState.EMPTY;
-                        gameTableModel.setCellState(ghost.row, ghost.col, ghost.ghostType);
-                        pacmanCaught();
+                        if (gameModel.getUpgradeState() != UpgradeState.INVISIBILITY_UPGRADE_STATE ) {
+                            gameTableModel.setCellState(prevGhostRow, prevGhostCol, ghost.cellUnderneath);
+                            ghost.setCurrentDirection(nextMoveDirection);
+                            gameTableModel.setCellState(ghost.row, ghost.col, ghost.ghostType);
+                            pacmanCaught();
 
-                        return;
+                            return;
+                        } else {
 
+                            gameTableModel.setCellState(prevGhostRow, prevGhostCol, ghost.cellUnderneath);
+                            PathNode targetNode = gameTableModel.findPathNodeWithA(ghost.row, ghost.col, ghost.getStartRow(), ghost.getStartCol());
+                            ghost.setCurrentDirection(nextMoveDirection);
+                        }
                     } else if (gameTableModel.isGhost(nextRow, nextCol)) {
 
                         ghost.getPlannedPath().clear();
@@ -276,7 +303,7 @@ public class GameController {
                         gameTableModel.setCellState(ghost.row, ghost.col, ghost.ghostType);
                         return;
                     } else {
-                        ghost.tileUnderneath = contentOfNextCell;
+                        ghost.cellUnderneath = contentOfNextCell;
                     }
                     gameTableModel.setCellState(nextRow, nextCol, ghost.ghostType);
 
@@ -291,29 +318,45 @@ public class GameController {
         }
     }
 
+    public CellState getRandomCellUnderneath(CellState cellToRestore) {
+        Random random = new Random();
+        if (cellToRestore == EMPTY && random.nextDouble() < 0.25 && gameModel.getTimeElapsed() % 5 == 0) {
+            int randomIndex = random.nextInt(gameModel.availableUpgrades.size());
+            cellToRestore = gameModel.availableUpgrades.get(randomIndex);
+            return  cellToRestore;
+        } else if (cellToRestore == DOT && random.nextDouble() < 0.25 && gameModel.getTimeElapsed() % 5 == 0) {
+            int randomIndex = random.nextInt(gameModel.availableUpgrades.size());
+            cellToRestore = gameModel.availableUpgrades.get(randomIndex);
+            this.gameTableModel.eatDot();
+            return  cellToRestore;
+        }
+
+        return cellToRestore;
+    }
+
     private synchronized void pacmanCaught() throws InterruptedException {
 
         gameModel.updateLives(1);
+        gameBoardView.updateLives( gameModel.getLives() );
+
 
         if (gameModel.getLives() <= 0) {
             this.gameOver(GameResult.LOSE);
-//            gameModel.setCurrentGameState(GameState.GAME_OVER);
-//            timerThread.stopThread();
-
-            //System.out.println("GAME OVER");
+//
         } else {
             gameModel.setCurrentGameState(GameState.PACMAN_CAUGHT_PAUSE);
 
             resetLevelState();
         }
-//        fireTableDataChanged();
+
 
     }
 
     private synchronized void resetLevelState() throws InterruptedException {
         try {
             for (Ghost ghost : this.ghosts) {
-                gameTableModel.setCellState(ghost.row, ghost.col, EMPTY);
+                gameTableModel.setCellState(ghost.row, ghost.col,  ghost.cellUnderneath);
+                ghost.cellUnderneath = CellState.EMPTY;
             }
             initializeEntities();
             this.gameModel.setCurrentGameState(GameState.RUNNING);
@@ -321,7 +364,17 @@ public class GameController {
         } catch (Exception e) {
             System.out.println("Smth wrong!");
         }
+    }
 
+    private synchronized void ghostEaterReset()  {
+
+            for (Ghost ghost : this.ghosts) {
+                gameTableModel.setCellState(ghost.row, ghost.col, EMPTY);
+                gameTableModel.setCellState(ghost.getStartRow(), ghost.getStartCol(), ghost.ghostType);
+                ghost.row = ghost.getStartRow();
+                ghost.col = ghost.getStartCol();
+                ghost.resetTickCounter();
+            }
 
     }
 

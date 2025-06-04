@@ -10,12 +10,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
+
+import pacman.controller.HighScoreController;
 import pacman.controller.MenuController;
 
 public class Menu extends JFrame {
     private Font baseFont;
+    HighScoreController highScoreController;
 
-    public Menu (MenuController controller){
+    public Menu (MenuController controller, HighScoreController highScoreController){
 
         setSize(500,500);
         setLayout(new BorderLayout());
@@ -23,6 +26,7 @@ public class Menu extends JFrame {
         setLocationRelativeTo(null);
         setBackground(new Color(0,0,60));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.highScoreController = highScoreController;
 
         this.baseFont = (FontLoader.loadFont ("/Font/pacman.ttf"));
 
@@ -108,80 +112,7 @@ public class Menu extends JFrame {
         exitBut.setBackground(new Color(0,0,60));
 
         mainPanel.add(exitBut, tableContent);
-//
-//        JPanel logoContainer = new JPanel();
-//        logoContainer.setOpaque(false);
-//
-//
-//
-//
-////
-//            if (imageToDraw != null) {
-//                ResizeIconLabel logoIcon = new ResizeIconLabel(imageToDraw);
-//
-//                JLabel logo = new JLabel(logoIcon.setImage(this));
-//
-//                logoContainer.add(logo);
-//
-//                addComponentListener(new ComponentAdapter() {
-//                    @Override
-//                    public void componentResized(ComponentEvent e) {
-//
-//                        logo = new JLabel(logoIcon.setImage(getFrame()));
-//                        logo.revalidate();
-//                        logo.repaint();
-//                    }
-//                });
-//
-//            }
-//            else {
-//                System.err.println("Logo not found");
-//                logoContainer.add(new JLabel("Logo not found"));
-//            }
 
-
-
-
-
-
-//
-//        ImagePanel panelLogo = new ImagePanel(imageToDraw);
-//        panelLogo.setPreferredSize(new Dimension(w/2, h/2));
-//
-//
-//        logoContainer.add(panelLogo);
-//        mainPanel.add(logoContainer, BorderLayout.NORTH);
-//
-//
-//        JPanel panelButtons = new JPanel(new GridLayout(3, 1, 20, 20));
-//
-//        panelButtons.setOpaque(false);
-//        panelButtons.setPreferredSize(new Dimension(0, h/2));
-//
-//        panelButtons.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-//
-//        JButton newGameBut = new JButton("New Game");
-//        JButton highScoresBut = new JButton("High Scores");
-//        JButton exitBut = new JButton("Exit");
-//
-//        newGameBut.setFont(baseFont);
-//        newGameBut.setForeground(Color.orange);
-//        newGameBut.setBackground(new Color(0,0,60));
-//
-//        highScoresBut.setFont(baseFont);
-//        highScoresBut.setForeground(Color.orange);
-//        highScoresBut.setBackground(new Color(0,0,60));
-//
-//        exitBut.setFont(baseFont);
-//        exitBut.setForeground(Color.orange);
-//        exitBut.setBackground(new Color(0,0,60));
-//
-//
-//
-//
-//        panelButtons.add(newGameBut);
-//        panelButtons.add(highScoresBut);
-//        panelButtons.add(exitBut);
 
         newGameBut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -190,7 +121,7 @@ public class Menu extends JFrame {
 
         highScoresBut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                controller.highScoreList(Menu.this);
+                controller.highScoreList(Menu.this, highScoreController);
             }});
 
         exitBut.addActionListener(new ActionListener() {
@@ -198,18 +129,6 @@ public class Menu extends JFrame {
                 controller.exit(Menu.this);
             }});
 
-
-        //mainPanel.add(panelButtons, BorderLayout.CENTER);
-
-
-
-//        JPanel panelBottom = new JPanel(new BorderLayout(5, 5));
-//        panelBottom.setOpaque(false);
-//        JLabel label = new JLabel("©Created by Polina Grak", JLabel.CENTER);
-//        label.setFont(new Font("Serif", Font.BOLD, 15));
-//        panelBottom.add(label, BorderLayout.CENTER);
-//
-//        mainPanel.add(panelBottom, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);

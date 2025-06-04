@@ -1,6 +1,9 @@
 package pacman.view;
+import pacman.controller.HighScoreController;
 import pacman.model.GameModel;
 import pacman.model.GameTableModel;
+
+
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -8,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
 import pacman.model.PacmanModel;
 import pacman.threads.AnimationThread;
@@ -18,14 +22,17 @@ public class GameBoardView extends JFrame {
     private final GameTableModel tableModel;
     private final GameModel gameModel;
     private final PacmanModel pacmanModel;
+
     private final JTable gameTable;
     private final JPanel centerPanel;
+    private final HighScoreController highScoreController;
 
     private JLabel scoreValue;
     private JLabel livesValue;
     private JLabel highScoreValue;
     private JLabel timeCounterValue;
     private Font baseFont;
+    private JPanel bottomPanel;
 
     private final AnimationThread animationThread;
     private volatile int animationFrameCounter = 0;
@@ -33,11 +40,13 @@ public class GameBoardView extends JFrame {
 
 
 
-    public GameBoardView(GameTableModel tableModel, GameModel gameModel, PacmanModel pacmanModel) {
+    public GameBoardView(GameTableModel tableModel, GameModel gameModel, PacmanModel pacmanModel, HighScoreController highScoreController) {
 
         this.tableModel = tableModel;
         this.gameModel = gameModel;
         this.pacmanModel = pacmanModel;
+
+        this.highScoreController = highScoreController;
         setLayout(new BorderLayout());
         pack();
         //setSize(650,750);
@@ -48,6 +57,7 @@ public class GameBoardView extends JFrame {
 
 
         this.baseFont = (FontLoader.loadFont ("/Font/pacman.ttf"));
+
 
         JPanel topPanel = topPanel(baseFont);
 
@@ -63,11 +73,10 @@ public class GameBoardView extends JFrame {
         centerPanel.add(scrollPane);
 
 
-        JPanel bottomPanel = bottomPanel(baseFont);
+        this.bottomPanel = bottomPanel();
 
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
-        //add(gameTable, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
         this.addComponentListener(new ComponentAdapter() {
@@ -109,6 +118,8 @@ public class GameBoardView extends JFrame {
     public ItemDirection getItemDirectionFromModel() {
         return pacmanModel.getItemDirection() != null ? pacmanModel.getItemDirection() : ItemDirection.NONE;
     }
+
+
 
     private void updateComponentSizes() {
         int panelWidth = centerPanel.getWidth() - 10;
@@ -161,6 +172,8 @@ public class GameBoardView extends JFrame {
         gameTable.setOpaque(true);
 
     }
+
+
     private JPanel topPanel(Font baseFont){
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBackground(new Color(0,0,60));
@@ -206,7 +219,7 @@ public class GameBoardView extends JFrame {
 
         topIndicators.gridx=1;
         topIndicators.gridy=1;
-        highScoreValue = new JLabel("test");
+        highScoreValue = new JLabel(String.valueOf(highScoreController.getHighestScore()));
         highScoreValue.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(highScoreValue, topIndicators);
 
@@ -232,29 +245,43 @@ public class GameBoardView extends JFrame {
 
         return topPanel;
     }
-    private JPanel bottomPanel(Font baseFont){
-        JPanel bottomPanel = new JPanel();
+
+
+    private JPanel bottomPanel(){
+
+        JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBackground(new Color(0,0,60));
 
         baseFont = (baseFont != null)
                 ? baseFont.deriveFont(Font.BOLD, 20f)
                 : new Font("Arial", Font.BOLD, 40);
 
-        JLabel life = new JLabel("Life Counter");
-        life.setFont(baseFont);
-        life.setForeground(Color.orange);
-        life.setHorizontalAlignment(SwingConstants.CENTER);
-        bottomPanel.add(life);
+        BufferedImage imageToDraw = ResourceManager.getImage("LIVE");
+        Graphics2D g2d = imageToDraw.createGraphics();
+        ImageIcon iconFromBufferedImage = new ImageIcon(imageToDraw);
 
+        for (int i = 0; i < gameModel.getLives(); i++) {
+            JLabel lifeLabel = new JLabel( iconFromBufferedImage);
+            bottomPanel.add(lifeLabel);
+        }
 
         return bottomPanel;
     }
+    public void updateLives(int currentLives) {
+        bottomPanel.removeAll();
+        this.bottomPanel = bottomPanel();
+        bottomPanel.revalidate();
+        bottomPanel.repaint();
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+
 
     public void scoreUpdate (){
         scoreValue.setText(String.valueOf(gameModel.getScore()));
     }
-    public void highScore (int highScore){
-        highScoreValue.setText(String.format(String.valueOf(highScore)));
+    public void highScoreUpdate (int highScore){
+        highScoreValue.setText(String.format(String.valueOf(highScoreController.getHighestScore())));
 
     }
     public void updateTimeCounter (int minutes, int seconds){

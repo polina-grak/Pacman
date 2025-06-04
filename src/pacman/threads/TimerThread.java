@@ -1,6 +1,7 @@
 package pacman.threads;
 
 import pacman.controller.GameController;
+import pacman.enums.UpgradeState;
 import pacman.model.GameModel;
 
 public class TimerThread extends Thread {
@@ -22,6 +23,9 @@ public class TimerThread extends Thread {
                 Thread.sleep(DELAY);
                 if (gameModel.isGameRunning()) {
                     gameController.incrementTimer();
+                    if (gameModel.getUpgradeState() != UpgradeState.NONE ) {
+                        gameModel.decrementUpgradeSecondsLeft();
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

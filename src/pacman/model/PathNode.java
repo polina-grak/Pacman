@@ -35,7 +35,6 @@ public class PathNode implements Comparable<PathNode> {
         return row == pathNode.row && col == pathNode.col;
     }
     public int hashCode() {
-        // Простой hashCode на основе координат
         return 31 * row + col;
     }
     public String toString() {
