@@ -206,7 +206,14 @@ public class GameController {
             return;
         }
 
-        Ghost ghost = ghosts.stream().filter(x -> x.type == ghostType).findFirst().get();
+        Ghost ghost = null;
+        for (Ghost g : ghosts) {
+            if (g.type == ghostType) {
+                ghost = g;
+                break;
+            }
+        }
+
         ghost.incrementTickCounter();
 
         if (!ghost.isReleased()) {
