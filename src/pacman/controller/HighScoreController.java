@@ -55,7 +55,7 @@ public class HighScoreController {
             Collections.sort(scores);
 
         } catch (java.io.FileNotFoundException e) {
-            System.out.println("file wasn't found");
+            System.out.println("File wasn't found");
             this.scores = new ArrayList<>();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Loading error " + e.getMessage());

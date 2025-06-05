@@ -122,6 +122,8 @@ public class ResourceManager {
 
         images.put("INVISIBILITY", ImageLoader.loadImage("/Food/invincibility.png"));
 
+        images.put("SCORE_MULT", ImageLoader.loadImage("/Food/score_multiplier.png"));
+
         images.put("PACMAN_LOGO", ImageLoader.loadImage("/Pac-Man-Logo.png"));
 
         images.put("GAME_OVER", ImageLoader.loadImage("/Other/gameover.png"));

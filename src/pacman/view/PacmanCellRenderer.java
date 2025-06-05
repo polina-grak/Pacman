@@ -185,7 +185,9 @@ public class PacmanCellRenderer extends JPanel implements TableCellRenderer {
             case INVISIBILITY_UPGRADE:
                 imageToDraw = ResourceManager.getImage("INVISIBILITY");
                 break;
-
+            case SCORE_MULT_UPGRADE:
+                imageToDraw = ResourceManager.getImage("SCORE_MULT");
+                break;
 
         }
         if (imageToDraw != null) {

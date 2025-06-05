@@ -155,20 +155,27 @@ public class GameController {
             pacmanModel.setPacmanIntendedDirection(intendedDirection);
 
             if (contentOfNextCell == CellState.DOT) {
-                this.gameModel.updateBoardViewScore(10);
+                if (gameModel.getUpgradeState() != UpgradeState.SCORE_MULT_UPGRADE_STATE) {
+                    this.gameModel.updateBoardViewScore(10);
+                } else {
+                    this.gameModel.updateBoardViewScore(50);
+                }
                 this.gameTableModel.eatDot();
-            } else if (contentOfNextCell == CellState.POWER_PELLET) {
-                this.gameModel.updateBoardViewScore(50);
-                // Activate hunter mode
             } else if (contentOfNextCell == CellState.EXTRA_LIFE_UPGRADE) {
                 this.gameModel.increaseLives();
                 gameBoardView.updateLives( gameModel.getLives() );
             } else if (contentOfNextCell == CellState.EXTRA_FOOD) {
-                this.gameModel.updateBoardViewScore(100);
+                if (gameModel.getUpgradeState() != UpgradeState.SCORE_MULT_UPGRADE_STATE) {
+                    this.gameModel.updateBoardViewScore(100);
+                } else {
+                    this.gameModel.updateBoardViewScore(500);
+                }
             } else if (contentOfNextCell == CellState.GHOST_EATER_UPGRADE) {
                 ghostEaterReset();
-            }else if (contentOfNextCell == CellState.INVISIBILITY_UPGRADE) {
+            } else if (contentOfNextCell == CellState.INVISIBILITY_UPGRADE) {
                 gameModel.setUpgradeState( UpgradeState.INVISIBILITY_UPGRADE_STATE );
+            } else if (contentOfNextCell == CellState.SCORE_MULT_UPGRADE) {
+                gameModel.setUpgradeState( UpgradeState.SCORE_MULT_UPGRADE_STATE );
             }
 
 
@@ -369,7 +376,8 @@ public class GameController {
     private synchronized void ghostEaterReset()  {
 
             for (Ghost ghost : this.ghosts) {
-                gameTableModel.setCellState(ghost.row, ghost.col, EMPTY);
+                gameTableModel.setCellState(ghost.row, ghost.col,  ghost.cellUnderneath);
+                ghost.cellUnderneath = CellState.EMPTY;
                 gameTableModel.setCellState(ghost.getStartRow(), ghost.getStartCol(), ghost.ghostType);
                 ghost.row = ghost.getStartRow();
                 ghost.col = ghost.getStartCol();
