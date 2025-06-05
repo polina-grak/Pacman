@@ -3,13 +3,11 @@ package pacman.controller;
 import pacman.model.GameModel;
 import pacman.model.GameTableModel;
 import pacman.model.PacmanModel;
-import pacman.model.Ghost;
-import pacman.threads.PacmanMovementThread;
 import pacman.view.GameBoardView;
 import pacman.view.HighScoresView;
 import pacman.view.MazeSetterView;
 import pacman.view.Menu;
-import pacman.controller.HighScoreController;
+
 
 import javax.swing.*;
 
@@ -17,7 +15,6 @@ public class MenuController {
 
     GameBoardView gameBoardView;
     private final int PACMAN_MOVE_DELAY = 250;
-    //private final int GHOST_MOVE_DELAY = 250;
     private HighScoreController highScoreController;
 
     public void mazeSizeChooser(Menu menu) {
@@ -39,7 +36,7 @@ public class MenuController {
     }
 
     public void highScoreList(Menu menu, HighScoreController highScoreController) {
-        HighScoresView highScoresView = new HighScoresView(menu, this, highScoreController);
+        HighScoresView highScoresView = new HighScoresView(menu, highScoreController);
         highScoresView.setVisible(true);
     }
 

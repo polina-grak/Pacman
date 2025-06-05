@@ -49,7 +49,6 @@ public class GameBoardView extends JFrame {
         this.highScoreController = highScoreController;
         setLayout(new BorderLayout());
         pack();
-        //setSize(650,750);
         setMinimumSize(new Dimension(550, 650));
         setLocationRelativeTo(null);
         setBackground(new Color(0,0,60));

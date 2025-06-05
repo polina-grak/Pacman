@@ -300,7 +300,6 @@ public class GameController {
                         } else {
 
                             gameTableModel.setCellState(prevGhostRow, prevGhostCol, ghost.cellUnderneath);
-                            PathNode targetNode = gameTableModel.findPathNodeWithA(ghost.row, ghost.col, ghost.getStartRow(), ghost.getStartCol());
                             ghost.setCurrentDirection(nextMoveDirection);
                         }
                     } else if (gameTableModel.isGhost(nextRow, nextCol)) {
@@ -320,7 +319,6 @@ public class GameController {
                         currentPath.clear();
                     }
                 }
-
             }
         }
     }
@@ -349,7 +347,7 @@ public class GameController {
 
         if (gameModel.getLives() <= 0) {
             this.gameOver(GameResult.LOSE);
-//
+
         } else {
             gameModel.setCurrentGameState(GameState.PACMAN_CAUGHT_PAUSE);
 

@@ -47,9 +47,6 @@ public class PacmanModel {
 
         if (this.pacmanCurrentDirection != newIntendedDirection) {
             this.pacmanCurrentDirection = newIntendedDirection;
-            if (this.pacmanIntendedDirection == ItemDirection.NONE) {
-//                fireTableCellUpdated(pacmanRow, pacmanCol);
-            }
         }
     }
 }
