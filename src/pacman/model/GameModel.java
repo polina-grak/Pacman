@@ -25,9 +25,11 @@ public class GameModel {
 
     );
     private UpgradeState upgradeState = UpgradeState.NONE;
+
     public UpgradeState getUpgradeState() {
         return upgradeState;
     }
+
     public void setUpgradeState(UpgradeState upgradeState) {
         this.upgradeState = upgradeState;
         if (upgradeState == UpgradeState.NONE) {
@@ -36,6 +38,7 @@ public class GameModel {
             this.upgradeSecondsLeft = 10;
         }
     }
+
     public void decrementUpgradeSecondsLeft() {
         if (upgradeSecondsLeft > 0) {
             upgradeSecondsLeft--;
@@ -43,18 +46,6 @@ public class GameModel {
             this.upgradeState = UpgradeState.NONE;
             this.upgradeSecondsLeft = 0;
         }
-    }
-
-    public List<CellState> getAvailableUpgrades() {
-
-        return availableUpgrades;
-    }
-
-    public void resetUpgradeState() {}
-
-
-    public GameModel() {
-
     }
 
     public int getScore() {
@@ -73,9 +64,9 @@ public class GameModel {
         this.lives -= livesDecrement;
 
     }
-    public void increaseLives() {
-        this.lives +=1;
 
+    public void increaseLives() {
+        this.lives += 1;
     }
 
     public GameState getCurrentGameState() {
@@ -102,7 +93,8 @@ public class GameModel {
     public void setAnimationThread(AnimationThread animationThread) {
         this.animationThread = animationThread;
     }
+
     public AnimationThread getAnimationThread() {
-       return animationThread;
+        return animationThread;
     }
 }

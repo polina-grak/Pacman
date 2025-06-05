@@ -9,7 +9,6 @@ public class PacmanModel {
     private volatile ItemDirection pacmanIntendedDirection = ItemDirection.NONE;
 
 
-
     public int getRow() {
         return row;
     }

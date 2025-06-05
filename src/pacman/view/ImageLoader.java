@@ -18,7 +18,7 @@ public class ImageLoader {
             BufferedImage image = ImageIO.read(imageStream);
             return image;
 
-        }  catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("error image loading:" + ImagePath);
         }
         return null;

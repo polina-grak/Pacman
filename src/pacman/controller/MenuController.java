@@ -8,13 +8,11 @@ import pacman.view.HighScoresView;
 import pacman.view.MazeSetterView;
 import pacman.view.Menu;
 
-
 import javax.swing.*;
 
 public class MenuController {
 
     GameBoardView gameBoardView;
-    private final int PACMAN_MOVE_DELAY = 250;
     private HighScoreController highScoreController;
 
     public void mazeSizeChooser(Menu menu) {
@@ -27,9 +25,9 @@ public class MenuController {
         GameTableModel gameBoardModel = new GameTableModel(selectedWidth, selectedHeight);
         PacmanModel pacmanModel = new PacmanModel();
         GameModel gameModel = new GameModel();
-        this.gameBoardView = new GameBoardView(gameBoardModel, gameModel, pacmanModel,highScoreController);
+        this.gameBoardView = new GameBoardView(gameBoardModel, gameModel, pacmanModel, highScoreController);
         GameController gameController = new GameController(gameBoardView, gameBoardModel, pacmanModel, gameModel, highScoreController, selectedWidth, selectedHeight);
-        KeyController controller = new KeyController(pacmanModel, gameBoardView, gameController);
+        KeyController keyController = new KeyController(pacmanModel, gameBoardView, gameController);
         gameController.startGame();
         gameBoardView.setVisible(true);
         gameBoardView.requestFocusInWindow();

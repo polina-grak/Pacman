@@ -1,6 +1,5 @@
 package pacman.view;
 
-import pacman.controller.MenuController;
 import pacman.controller.HighScoreController;
 import pacman.model.HighScoreEntry;
 
@@ -10,8 +9,8 @@ import java.util.List;
 
 public class HighScoresView extends JDialog {
     HighScoreController highScoreController;
-    private JList<String> highScoreJList;
-    private DefaultListModel<String> listModel;
+    private final JList<String> highScoreJList;
+    private final DefaultListModel<String> listModel;
 
     public HighScoresView(JFrame menu,  HighScoreController highScoreController) {
         super(menu, true);

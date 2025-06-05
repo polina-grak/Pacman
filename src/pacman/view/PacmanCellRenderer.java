@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 public class PacmanCellRenderer extends JPanel implements TableCellRenderer {
     private CellState currentState;
-    private GameBoardView gameBoardView;
+    private final GameBoardView gameBoardView;
 
     public PacmanCellRenderer(GameBoardView gameBoardView) {
         this.gameBoardView = gameBoardView;

@@ -18,8 +18,7 @@ public class FontLoader {
 
             return Font.createFont(Font.TRUETYPE_FONT, fontStream);
 
-        }
-        catch (IOException | FontFormatException e) {
+        } catch (IOException | FontFormatException e) {
             System.err.println("error font loading:" + fontPath);
             return null;
         }

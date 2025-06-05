@@ -1,4 +1,5 @@
 package pacman.controller;
+
 import pacman.enums.*;
 
 import pacman.model.*;
@@ -20,31 +21,25 @@ import static pacman.model.GameTableModel.PATTERN_SIZE;
 
 public class GameController {
 
-    private PacmanMovementThread pacmanMovementThread;
-    private AnimationThread animationThread;
+    private final PacmanMovementThread pacmanMovementThread;
 
     private TimerThread timerThread;
     private final int GHOST_MOVE_DELAY_MS = 600;
-    private final int PAUSE_DURATION_MS = 2000;
     private final int PACMAN_MOVE_DELAY = 500;
     private static final int RECALCULATE_PATH_INTERVAL_TICKS = 5;
 
 
-    private PacmanModel pacmanModel;
-    private GameTableModel gameTableModel;
-    private GameBoardView gameBoardView;
+    private final PacmanModel pacmanModel;
+    private final GameTableModel gameTableModel;
+    private final GameBoardView gameBoardView;
     private final HighScoreController highScoreController;
-    private final int tableWidth;
-    private final int tableHeight;
-    private GameModel gameModel;
-    private ArrayList<Ghost> ghosts = new ArrayList<>();
+    private final GameModel gameModel;
+    private final ArrayList<Ghost> ghosts = new ArrayList<>();
 
 
     public GameController(GameBoardView gameBoardView, GameTableModel gameBoardModel, PacmanModel pacmanModel, GameModel gameModel, HighScoreController highScoreController, int width, int height) {
         this.gameBoardView = gameBoardView;
         this.highScoreController = highScoreController;
-        this.tableWidth = width;
-        this.tableHeight = height;
         this.pacmanModel = pacmanModel;
         this.gameModel = gameModel;
         this.gameTableModel = gameBoardModel;
@@ -58,11 +53,11 @@ public class GameController {
         int pinkDelayTicks = (pinkGhostDelaySeconds * 1000) / GHOST_MOVE_DELAY_MS;
         int cyanDelayTicks = (cyanGhostDelaySeconds * 1000) / GHOST_MOVE_DELAY_MS;
 
-        Ghost redGhost = new Ghost(GhostType.RED, tableHeight - 2, 1, ItemDirection.UP, GHOST_RED, CellState.GHOST_EMPTY, redDelayTicks);
+        Ghost redGhost = new Ghost(GhostType.RED, height - 2, 1, ItemDirection.UP, GHOST_RED, CellState.GHOST_EMPTY, redDelayTicks);
         ghosts.add(redGhost);
-        Ghost pinkGhost = new Ghost(GhostType.PINK, tableHeight - 2, 2, ItemDirection.UP, GHOST_PINK, CellState.GHOST_EMPTY, pinkDelayTicks);
+        Ghost pinkGhost = new Ghost(GhostType.PINK, height - 2, 2, ItemDirection.UP, GHOST_PINK, CellState.GHOST_EMPTY, pinkDelayTicks);
         ghosts.add(pinkGhost);
-        Ghost cyanGhost = new Ghost(GhostType.CYAN, tableHeight - 2, 3, ItemDirection.UP, GHOST_CYAN, CellState.GHOST_EMPTY, cyanDelayTicks);
+        Ghost cyanGhost = new Ghost(GhostType.CYAN, height - 2, 3, ItemDirection.UP, GHOST_CYAN, CellState.GHOST_EMPTY, cyanDelayTicks);
         ghosts.add(cyanGhost);
 
 
@@ -163,7 +158,7 @@ public class GameController {
                 this.gameTableModel.eatDot();
             } else if (contentOfNextCell == CellState.EXTRA_LIFE_UPGRADE) {
                 this.gameModel.increaseLives();
-                gameBoardView.updateLives( gameModel.getLives() );
+                gameBoardView.updateLives(gameModel.getLives());
             } else if (contentOfNextCell == CellState.EXTRA_FOOD) {
                 if (gameModel.getUpgradeState() != UpgradeState.SCORE_MULT_UPGRADE_STATE) {
                     this.gameModel.updateBoardViewScore(100);
@@ -173,11 +168,10 @@ public class GameController {
             } else if (contentOfNextCell == CellState.GHOST_EATER_UPGRADE) {
                 ghostEaterReset();
             } else if (contentOfNextCell == CellState.INVISIBILITY_UPGRADE) {
-                gameModel.setUpgradeState( UpgradeState.INVISIBILITY_UPGRADE_STATE );
+                gameModel.setUpgradeState(UpgradeState.INVISIBILITY_UPGRADE_STATE);
             } else if (contentOfNextCell == CellState.SCORE_MULT_UPGRADE) {
-                gameModel.setUpgradeState( UpgradeState.SCORE_MULT_UPGRADE_STATE );
+                gameModel.setUpgradeState(UpgradeState.SCORE_MULT_UPGRADE_STATE);
             }
-
 
 
             gameBoardView.scoreUpdate();
@@ -186,7 +180,7 @@ public class GameController {
 
             for (Ghost ghost : this.ghosts) {
                 if (this.pacmanModel.getRow() == ghost.row && this.pacmanModel.getCol() == ghost.col) {
-                    if (gameModel.getUpgradeState() != UpgradeState.INVISIBILITY_UPGRADE_STATE ) {
+                    if (gameModel.getUpgradeState() != UpgradeState.INVISIBILITY_UPGRADE_STATE) {
                         pacmanCaught();
                         return true;
                     } else {
@@ -230,7 +224,7 @@ public class GameController {
 
 
                 PathNode targetNode = gameTableModel.findPathNodeWithA(ghost.row, ghost.col, targetRow, targetCol);
-                if (gameModel.getUpgradeState() == UpgradeState.INVISIBILITY_UPGRADE_STATE ) {
+                if (gameModel.getUpgradeState() == UpgradeState.INVISIBILITY_UPGRADE_STATE) {
                     targetNode = gameTableModel.findPathNodeWithA(ghost.row, ghost.col, ghost.getStartRow(), ghost.getStartCol());
                 }
 
@@ -290,7 +284,7 @@ public class GameController {
 
                     CellState contentOfNextCell = gameTableModel.getCellState(nextRow, nextCol);
                     if (contentOfNextCell == CellState.PACMAN || (nextRow == pacmanModel.getRow() && nextCol == pacmanModel.getCol())) {
-                        if (gameModel.getUpgradeState() != UpgradeState.INVISIBILITY_UPGRADE_STATE ) {
+                        if (gameModel.getUpgradeState() != UpgradeState.INVISIBILITY_UPGRADE_STATE) {
                             gameTableModel.setCellState(prevGhostRow, prevGhostCol, ghost.cellUnderneath);
                             ghost.setCurrentDirection(nextMoveDirection);
                             gameTableModel.setCellState(ghost.row, ghost.col, ghost.ghostType);
@@ -328,12 +322,12 @@ public class GameController {
         if (cellToRestore == EMPTY && random.nextDouble() < 0.25 && gameModel.getTimeElapsed() % 5 == 0) {
             int randomIndex = random.nextInt(gameModel.availableUpgrades.size());
             cellToRestore = gameModel.availableUpgrades.get(randomIndex);
-            return  cellToRestore;
+            return cellToRestore;
         } else if (cellToRestore == DOT && random.nextDouble() < 0.25 && gameModel.getTimeElapsed() % 5 == 0) {
             int randomIndex = random.nextInt(gameModel.availableUpgrades.size());
             cellToRestore = gameModel.availableUpgrades.get(randomIndex);
             this.gameTableModel.eatDot();
-            return  cellToRestore;
+            return cellToRestore;
         }
 
         return cellToRestore;
@@ -342,12 +336,11 @@ public class GameController {
     private synchronized void pacmanCaught() throws InterruptedException {
 
         gameModel.updateLives(1);
-        gameBoardView.updateLives( gameModel.getLives() );
+        gameBoardView.updateLives(gameModel.getLives());
 
 
         if (gameModel.getLives() <= 0) {
             this.gameOver(GameResult.LOSE);
-
         } else {
             gameModel.setCurrentGameState(GameState.PACMAN_CAUGHT_PAUSE);
 
@@ -360,7 +353,7 @@ public class GameController {
     private synchronized void resetLevelState() throws InterruptedException {
         try {
             for (Ghost ghost : this.ghosts) {
-                gameTableModel.setCellState(ghost.row, ghost.col,  ghost.cellUnderneath);
+                gameTableModel.setCellState(ghost.row, ghost.col, ghost.cellUnderneath);
                 ghost.cellUnderneath = CellState.EMPTY;
             }
             initializeEntities();
@@ -371,16 +364,16 @@ public class GameController {
         }
     }
 
-    private synchronized void ghostEaterReset()  {
+    private synchronized void ghostEaterReset() {
 
-            for (Ghost ghost : this.ghosts) {
-                gameTableModel.setCellState(ghost.row, ghost.col,  ghost.cellUnderneath);
-                ghost.cellUnderneath = CellState.EMPTY;
-                gameTableModel.setCellState(ghost.getStartRow(), ghost.getStartCol(), ghost.ghostType);
-                ghost.row = ghost.getStartRow();
-                ghost.col = ghost.getStartCol();
-                ghost.resetTickCounter();
-            }
+        for (Ghost ghost : this.ghosts) {
+            gameTableModel.setCellState(ghost.row, ghost.col, ghost.cellUnderneath);
+            ghost.cellUnderneath = CellState.EMPTY;
+            gameTableModel.setCellState(ghost.getStartRow(), ghost.getStartCol(), ghost.ghostType);
+            ghost.row = ghost.getStartRow();
+            ghost.col = ghost.getStartCol();
+            ghost.resetTickCounter();
+        }
 
     }
 
@@ -393,7 +386,7 @@ public class GameController {
     }
 
     public void checkDotsCount() {
-        if(gameTableModel.getDotsCount() == 0){
+        if (gameTableModel.getDotsCount() == 0) {
             gameOver(GameResult.WIN);
         }
     }
@@ -403,23 +396,23 @@ public class GameController {
         System.out.println("GAME OVER");
         int score = gameModel.getScore();
 
-        GameOverView gameOverView = new GameOverView( result, score, gameBoardView,this );
+        GameOverView gameOverView = new GameOverView(result, score, gameBoardView, this);
         gameOverView.setVisible(true);
 
     }
 
 
-
-    public void gameIsEnded (String name){
+    public void gameIsEnded(String name) {
         int score = gameModel.getScore();
         highScoreController.addScore(name, score);
         closeGame();
     }
 
 
-    public void closeGame (){
+    public void closeGame() {
 
-        this.animationThread = gameModel.getAnimationThread();
+        AnimationThread animationThread = gameModel.getAnimationThread();
+        animationThread.stopThread();
         pacmanMovementThread.stopThread();
         timerThread.stopThread();
         for (Ghost ghost : this.ghosts) {
@@ -429,7 +422,6 @@ public class GameController {
         MenuController controller = new MenuController();
         controller.openMenu();
     }
-
 
 
 }

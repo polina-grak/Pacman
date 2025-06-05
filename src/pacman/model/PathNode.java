@@ -18,9 +18,11 @@ public class PathNode implements Comparable<PathNode> {
         this.gCost = gCost;
         this.hCost = hCost;
     }
+
     public double getFCost() {
         return gCost + hCost;
     }
+
     public int compareTo(PathNode other) {
         int fCostCompare = Double.compare(this.getFCost(), other.getFCost());
         if (fCostCompare == 0) {
@@ -28,15 +30,18 @@ public class PathNode implements Comparable<PathNode> {
         }
         return fCostCompare;
     }
+
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PathNode pathNode = (PathNode) o;
         return row == pathNode.row && col == pathNode.col;
     }
+
     public int hashCode() {
         return 31 * row + col;
     }
+
     public String toString() {
         return "PathNode{" +
                 "row=" + row +
@@ -46,7 +51,6 @@ public class PathNode implements Comparable<PathNode> {
                 ", f=" + getFCost() +
                 '}';
     }
-
 
 
 }

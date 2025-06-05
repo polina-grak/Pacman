@@ -25,6 +25,7 @@ public class HighScoreController {
         loadHighScores();
         return scores;
     }
+
     public int getHighestScore() {
         if (scores != null && !scores.isEmpty()) {
             return scores.getFirst().getScore();

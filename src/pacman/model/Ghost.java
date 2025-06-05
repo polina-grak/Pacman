@@ -5,14 +5,12 @@ import pacman.enums.GhostType;
 import pacman.enums.ItemDirection;
 import pacman.threads.GhostMovementThread;
 
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 public class Ghost {
-    private int startRow;
-    private int startCol;
+    private final int startRow;
+    private final int startCol;
     public int row;
     public int col;
     public ItemDirection currentDirection;

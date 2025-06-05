@@ -1,5 +1,4 @@
 package pacman.controller;
-import pacman.controller.GameController;
 
 import pacman.enums.ItemDirection;
 import pacman.model.PacmanModel;
@@ -9,8 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyController implements KeyListener {
-    private PacmanModel model;
-    private GameBoardView view;
+    private final PacmanModel model;
+    private final GameBoardView view;
     public GameController controller;
 
     public KeyController(PacmanModel model, GameBoardView view, GameController controller) {
@@ -19,6 +18,7 @@ public class KeyController implements KeyListener {
         this.controller = controller;
         this.view.GameKeyListener(this);
     }
+
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
@@ -50,8 +50,10 @@ public class KeyController implements KeyListener {
         }
 
     }
+
     public void keyTyped(KeyEvent e) {
     }
+
     public void keyReleased(KeyEvent e) {
     }
 }

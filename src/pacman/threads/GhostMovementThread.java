@@ -4,7 +4,6 @@ import pacman.controller.GameController;
 import pacman.enums.GhostType;
 import pacman.enums.GameState;
 import pacman.model.GameModel;
-import pacman.model.GameTableModel;
 
 public class GhostMovementThread extends Thread {
     private final GameModel model;

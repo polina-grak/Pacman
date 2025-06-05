@@ -23,7 +23,7 @@ public class TimerThread extends Thread {
                 Thread.sleep(DELAY);
                 if (gameModel.isGameRunning()) {
                     gameController.incrementTimer();
-                    if (gameModel.getUpgradeState() != UpgradeState.NONE ) {
+                    if (gameModel.getUpgradeState() != UpgradeState.NONE) {
                         gameModel.decrementUpgradeSecondsLeft();
                     }
                 }

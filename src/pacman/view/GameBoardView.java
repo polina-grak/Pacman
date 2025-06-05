@@ -1,8 +1,8 @@
 package pacman.view;
+
 import pacman.controller.HighScoreController;
 import pacman.model.GameModel;
 import pacman.model.GameTableModel;
-
 
 
 import javax.swing.*;
@@ -28,7 +28,6 @@ public class GameBoardView extends JFrame {
     private final HighScoreController highScoreController;
 
     private JLabel scoreValue;
-    private JLabel livesValue;
     private JLabel highScoreValue;
     private JLabel timeCounterValue;
     private Font baseFont;
@@ -37,7 +36,6 @@ public class GameBoardView extends JFrame {
     private final AnimationThread animationThread;
     private volatile int animationFrameCounter = 0;
     private final int ANIMATION_DELAY_MS = 250;
-
 
 
     public GameBoardView(GameTableModel tableModel, GameModel gameModel, PacmanModel pacmanModel, HighScoreController highScoreController) {
@@ -51,24 +49,24 @@ public class GameBoardView extends JFrame {
         pack();
         setMinimumSize(new Dimension(550, 650));
         setLocationRelativeTo(null);
-        setBackground(new Color(0,0,60));
+        setBackground(new Color(0, 0, 60));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        this.baseFont = (FontLoader.loadFont ("/Font/pacman.ttf"));
+        this.baseFont = (FontLoader.loadFont("/Font/pacman.ttf"));
 
 
         JPanel topPanel = topPanel(baseFont);
 
         this.gameTable = new JTable(tableModel);
         gameTable.setOpaque(false);
-        gameBoardDesign ();
+        gameBoardDesign();
 
         JScrollPane scrollPane = new JScrollPane(gameTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBackground(new Color(0,0,60));
+        centerPanel.setBackground(new Color(0, 0, 60));
         centerPanel.add(scrollPane);
 
 
@@ -91,7 +89,7 @@ public class GameBoardView extends JFrame {
 
     }
 
-    public void GameKeyListener (KeyListener listener){
+    public void GameKeyListener(KeyListener listener) {
         this.addKeyListener(listener);
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -100,6 +98,7 @@ public class GameBoardView extends JFrame {
     public void incrementAnimationFrameCounter() {
         this.animationFrameCounter++;
     }
+
     public int getAnimationFrame() {
         return this.animationFrameCounter;
     }
@@ -117,7 +116,6 @@ public class GameBoardView extends JFrame {
     public ItemDirection getItemDirectionFromModel() {
         return pacmanModel.getItemDirection() != null ? pacmanModel.getItemDirection() : ItemDirection.NONE;
     }
-
 
 
     private void updateComponentSizes() {
@@ -149,7 +147,7 @@ public class GameBoardView extends JFrame {
 
     }
 
-    private void gameBoardDesign (){
+    private void gameBoardDesign() {
 
         gameTable.setDefaultRenderer(Object.class, new PacmanCellRenderer(this));
 
@@ -173,9 +171,9 @@ public class GameBoardView extends JFrame {
     }
 
 
-    private JPanel topPanel(Font baseFont){
+    private JPanel topPanel(Font baseFont) {
         JPanel topPanel = new JPanel(new GridBagLayout());
-        topPanel.setBackground(new Color(0,0,60));
+        topPanel.setBackground(new Color(0, 0, 60));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 
@@ -191,39 +189,39 @@ public class GameBoardView extends JFrame {
         topIndicators.fill = GridBagConstraints.HORIZONTAL;
         topIndicators.insets = new Insets(5, 10, 0, 10);
 
-        topIndicators.gridx=0;
-        topIndicators.gridy=0;
+        topIndicators.gridx = 0;
+        topIndicators.gridy = 0;
 
         JLabel scoreLabel = new JLabel("Score:");
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(scoreLabel, topIndicators);
 
-        topIndicators.gridx=1;
-        topIndicators.gridy=0;
+        topIndicators.gridx = 1;
+        topIndicators.gridy = 0;
         JLabel highScoreLabel = new JLabel("High Score:");
         highScoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(highScoreLabel, topIndicators);
 
-        topIndicators.gridx=2;
-        topIndicators.gridy=0;
+        topIndicators.gridx = 2;
+        topIndicators.gridy = 0;
         JLabel timeCounterLabel = new JLabel("Time Counter:");
         timeCounterLabel.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(timeCounterLabel, topIndicators);
 
-        topIndicators.gridx=0;
-        topIndicators.gridy=1;
+        topIndicators.gridx = 0;
+        topIndicators.gridy = 1;
         scoreValue = new JLabel(String.valueOf(gameModel.getScore()));
         scoreValue.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(scoreValue, topIndicators);
 
-        topIndicators.gridx=1;
-        topIndicators.gridy=1;
+        topIndicators.gridx = 1;
+        topIndicators.gridy = 1;
         highScoreValue = new JLabel(String.valueOf(highScoreController.getHighestScore()));
         highScoreValue.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(highScoreValue, topIndicators);
 
-        topIndicators.gridx=2;
-        topIndicators.gridy=1;
+        topIndicators.gridx = 2;
+        topIndicators.gridy = 1;
         timeCounterValue = new JLabel("00:00");
         timeCounterValue.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(timeCounterValue, topIndicators);
@@ -246,10 +244,10 @@ public class GameBoardView extends JFrame {
     }
 
 
-    private JPanel bottomPanel(){
+    private JPanel bottomPanel() {
 
         JPanel bottomPanel = new JPanel(new GridBagLayout());
-        bottomPanel.setBackground(new Color(0,0,60));
+        bottomPanel.setBackground(new Color(0, 0, 60));
 
         baseFont = (baseFont != null)
                 ? baseFont.deriveFont(Font.BOLD, 20f)
@@ -260,12 +258,13 @@ public class GameBoardView extends JFrame {
         ImageIcon iconFromBufferedImage = new ImageIcon(imageToDraw);
 
         for (int i = 0; i < gameModel.getLives(); i++) {
-            JLabel lifeLabel = new JLabel( iconFromBufferedImage);
+            JLabel lifeLabel = new JLabel(iconFromBufferedImage);
             bottomPanel.add(lifeLabel);
         }
 
         return bottomPanel;
     }
+
     public void updateLives(int currentLives) {
         bottomPanel.removeAll();
         this.bottomPanel = bottomPanel();
@@ -275,18 +274,15 @@ public class GameBoardView extends JFrame {
     }
 
 
-
-    public void scoreUpdate (){
+    public void scoreUpdate() {
         scoreValue.setText(String.valueOf(gameModel.getScore()));
     }
-    public void highScoreUpdate (int highScore){
-        highScoreValue.setText(String.format(String.valueOf(highScoreController.getHighestScore())));
 
-    }
-    public void updateTimeCounter (int minutes, int seconds){
+    public void updateTimeCounter(int minutes, int seconds) {
         timeCounterValue.setText(String.format("%02d:%02d", minutes, seconds));
     }
-    public static void close(JFrame gameBoardView){
+
+    public static void close(JFrame gameBoardView) {
         gameBoardView.dispose();
     }
 }

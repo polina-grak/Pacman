@@ -1,6 +1,5 @@
 package pacman.model;
 
-import pacman.controller.GameController;
 import pacman.enums.CellState;
 import pacman.enums.ItemDirection;
 
@@ -68,9 +67,6 @@ public class GameTableModel extends AbstractTableModel {
     private static final List<CellState[][]> PATTERNS = List.of(PATTERN_A, PATTERN_B, PATTERN_C, PATTERN_D, PATTERN_E);
     public static final int PATTERN_SIZE = 5;
 
-    private int width;
-    private int height;
-
     public int dotsCount = 0;
 
 
@@ -80,8 +76,6 @@ public class GameTableModel extends AbstractTableModel {
 
     public void createNewBoard(int width, int height) {
         this.board = new CellState[height][width];
-        this.width = width;
-        this.height = height;
         generateMazeWithPatterns();
 
         fireTableStructureChanged();
@@ -89,10 +83,10 @@ public class GameTableModel extends AbstractTableModel {
     }
 
     public int getDotsCount() {
-       return this.dotsCount;
+        return this.dotsCount;
     }
 
-    public void eatDot(){
+    public void eatDot() {
         this.dotsCount--;
     }
 

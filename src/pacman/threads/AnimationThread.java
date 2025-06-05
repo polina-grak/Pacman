@@ -1,6 +1,7 @@
 package pacman.threads;
 
 import pacman.view.GameBoardView;
+
 import javax.swing.SwingUtilities;
 
 

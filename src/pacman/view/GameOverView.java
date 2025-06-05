@@ -1,7 +1,6 @@
 package pacman.view;
 
 import pacman.controller.GameController;
-import pacman.controller.MenuController;
 import pacman.enums.GameResult;
 
 import javax.swing.*;
@@ -132,40 +131,38 @@ public class GameOverView extends JDialog {
 
 
         tableContent.fill = GridBagConstraints.HORIZONTAL;
-        tableContent.gridx=1;
-        tableContent.gridy=3;
+        tableContent.gridx = 1;
+        tableContent.gridy = 3;
         tableContent.gridwidth = 1;
         tableContent.anchor = GridBagConstraints.CENTER;
         tableContent.insets = new Insets(10, 10, 10, 10);
-        tableContent.ipady= 10;
+        tableContent.ipady = 10;
 
         JButton saveBut = new JButton("Save");
         saveBut.setFont(baseFont);
         saveBut.setForeground(Color.green);
         saveBut.setBackground(new Color(0, 0, 60));
-        mainPanel.add (saveBut, tableContent);
+        mainPanel.add(saveBut, tableContent);
 
 
         add(mainPanel, BorderLayout.CENTER);
 
 
-        saveBut.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String name = nameField.getText();
-                    if (name.trim().isEmpty()) {
-                        throw new ParseException("enter name", 0);
-                    }else
-                        gameController.gameIsEnded(name);
-                    setVisible(false);
-                } catch (ParseException pe) {
-                    JOptionPane.showMessageDialog(
-                            null,
-                            "Please enter your name",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                }
+        saveBut.addActionListener(e -> {
+            try {
+                String name = nameField.getText();
+                if (name.trim().isEmpty()) {
+                    throw new ParseException("enter name", 0);
+                } else
+                    gameController.gameIsEnded(name);
+                setVisible(false);
+            } catch (ParseException pe) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Please enter your name",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         });
     }

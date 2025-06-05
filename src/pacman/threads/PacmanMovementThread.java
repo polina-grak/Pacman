@@ -10,7 +10,7 @@ public class PacmanMovementThread extends Thread {
     private final int moveDelayMs;
     private volatile boolean running = true;
 
-    public PacmanMovementThread(GameController gameController, GameModel model,  int delayMillis) {
+    public PacmanMovementThread(GameController gameController, GameModel model, int delayMillis) {
         this.gameController = gameController;
         this.model = model;
         this.moveDelayMs = delayMillis;
